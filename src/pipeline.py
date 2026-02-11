@@ -61,6 +61,9 @@ def build_kpis(employees, attendance, performance):
     kpi["turnover_rate"] = kpi["turnover_rate"].fillna(0)
 
     CURATED.mkdir(parents=True, exist_ok=True)
+    # enforce column order (nice for BI)
+    kpi = kpi[["month", "absent_days", "total_days", "absenteeism_rate", "avg_performance", "terminations", "turnover_rate"]]
+ 
     kpi.to_csv(CURATED / "kpi_monthly.csv", index=False)
     return kpi
 
@@ -68,7 +71,13 @@ def main():
     employees, attendance, performance = load_raw()
     employees, attendance, performance = clean_data(employees, attendance, performance)
     kpi = build_kpis(employees, attendance, performance)
+
+    # run DQ checks (robust across Windows/CI)
+    import subprocess, sys
+    subprocess.check_call([sys.executable, "src/validate/data_quality.py"])
+
     print("OK - generated:", (CURATED / "kpi_monthly.csv"))
 
 if __name__ == "__main__":
     main()
+
