@@ -1,0 +1,32 @@
+from pathlib import Path
+import pandas as pd
+import json
+
+BASE = Path(__file__).resolve().parents[1]
+RAW = BASE / "data" / "raw"
+CLEAN = BASE / "data" / "clean"
+CURATED = BASE / "data" / "curated"
+
+def load_raw():
+    employees_path = RAW / "employees.csv"
+    employees = pd.read_csv(employees_path)
+
+    # normalize column names early
+    employees.columns = [c.strip().lower().replace(" ", "_") for c in employees.columns]
+
+    # parse dates only if columns exist
+    for col in ["hire_date", "termination_date"]:
+        if col in employees.columns:
+            employees[col] = pd.to_datetime(employees[col], errors="coerce")
+
+    attendance = pd.read_csv(RAW / "attendance.csv")
+    attendance.columns = [c.strip().lower().replace(" ", "_") for c in attendance.columns]
+    if "date" in attendance.columns:
+        attendance["date"] = pd.to_datetime(attendance["date"], errors="coerce")
+
+    performance = pd.DataFrame(json.loads((RAW / "performance.json").read_text(encoding="utf-8")))
+    performance.columns = [c.strip().lower().replace(" ", "_") for c in performance.columns]
+    if "date" in performance.columns:
+        performance["date"] = pd.to_datetime(performance["date"], errors="coerce")
+
+    return employees, attendance, performance
