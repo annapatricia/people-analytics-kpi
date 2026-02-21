@@ -81,41 +81,6 @@ Columns:
 
 ---
 
-## 🧪 Data Quality Checks
-
-Automated validation ensures:
-
-- Unique primary keys (employee_id)
-- Referential integrity (attendance ↔ employees)
-- Performance score within expected range [0–5]
-- Presence of required KPI columns
-
-
-Columns:
-
-- month
-- absent_days
-- total_days
-- absenteeism_rate
-- avg_performance
-- terminations
-- turnover_rate
-
----
-
-## 🧪 Data Quality Checks
-
-Automated validation ensures:
-
-- Unique primary keys (employee_id)
-- Referential integrity (attendance ↔ employees)
-- Performance score within expected range [0–5]
-- Presence of required KPI columns
-
-src/validate/data_quality.py
-
-he pipeline executes DQ automatically after KPI generation.
-
 ---
 
 ## ▶️ How to Run
